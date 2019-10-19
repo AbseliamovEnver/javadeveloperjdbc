@@ -3,6 +3,8 @@ package com.abseliamov.cinemaservice.utils;
 import com.abseliamov.cinemaservice.controller.*;
 import com.abseliamov.cinemaservice.dao.*;
 import com.abseliamov.cinemaservice.service.*;
+import com.abseliamov.cinemaservice.view.AdminMenu;
+import com.abseliamov.cinemaservice.view.AuthorizationMenu;
 import com.abseliamov.cinemaservice.view.ViewerMenu;
 
 import java.sql.Connection;
@@ -48,10 +50,15 @@ public class Injector {
     private static ViewerMenu viewerMenu = new ViewerMenu(currentViewer, viewerController, ticketController,
             genreController, seatController, seatTypesController, movieController);
 
+    private static AdminMenu adminMenu = new AdminMenu(viewerMenu);
+
+    private static AuthorizationMenu authorizationMenu = new AuthorizationMenu(adminMenu, viewerMenu,
+            viewerController, currentViewer);
+
     private Injector() {
     }
 
-    public static ViewerMenu getViewerMenu() {
-        return viewerMenu;
+    public static AuthorizationMenu getAuthorizationMenu() {
+        return authorizationMenu;
     }
 }

@@ -23,6 +23,9 @@ public class ViewerMenu {
     private SeatTypesController seatTypesController;
     private MovieController movieController;
 
+    public ViewerMenu() {
+    }
+
     public ViewerMenu(CurrentViewer currentViewer, ViewerController viewerController, TicketController ticketController,
                       GenreController genreController, SeatController seatController,
                       SeatTypesController seatTypesController, MovieController movieController) {
@@ -35,43 +38,24 @@ public class ViewerMenu {
         this.movieController = movieController;
     }
 
-    public void authorizationMenu() {
-        long authorizationMenuItem;
-        IOUtil.printMenuItem(MenuContent.getAuthorizationMenu());
-        while (true) {
-            authorizationMenuItem = IOUtil.getValidLongInputData("Select AUTHORIZATION MENU item: ");
-            switch ((int) authorizationMenuItem) {
-                case 0:
-                    IOUtil.printMenuHeader(MenuContent.getFooterMenu());
-                    System.exit(0);
-                    break;
-                case 1:
-                    if (authorization()) {
-                        mainMenu();
-                    }
-                    break;
-                default:
-                    if (authorizationMenuItem >= MenuContent.getAuthorizationMenu().size() - 1) {
-                        System.out.println("Enter correct menu item.");
-                    }
-                    break;
-            }
-        }
-    }
-
-    public void mainMenu() {
-        IOUtil.printMenuHeader(MenuContent.getHeaderMenu());
+    public long viewerMenu() {
         long mainMenuItem = -1;
         long ticketId = 0;
+        IOUtil.printMenuHeader(MenuContent.getHeaderMenu());
+        Role role = currentViewer.getViewer().getRole();
         while (true) {
             if (mainMenuItem == -1) {
-                IOUtil.printMenuItem(MenuContent.getMainMenu());
-                mainMenuItem = IOUtil.getValidLongInputData("Select MAIN MENU item: ");
+                IOUtil.printMenuItem(MenuContent.getViewerMenu());
+                mainMenuItem = IOUtil.getValidLongInputData("Select VIEWER MENU item: ");
             }
             switch ((int) mainMenuItem) {
                 case 0:
-                    IOUtil.printMenuHeader(MenuContent.getFooterMenu());
-                    System.exit(0);
+                    if (role == Role.ADMIN) {
+                        return -1;
+                    } else if (role == Role.USER) {
+                        IOUtil.printMenuHeader(MenuContent.getFooterMenu());
+                        System.exit(0);
+                    }
                     break;
                 case 1:
                     ticketId = searchMenu();
@@ -98,9 +82,9 @@ public class ViewerMenu {
                     mainMenuItem = requestMenu() == 0 ? -1 : 5;
                     break;
                 default:
-                    if (mainMenuItem >= MenuContent.getMainMenu().size() - 1) {
+                    if (mainMenuItem >= MenuContent.getViewerMenu().size() - 1) {
                         mainMenuItem = -1;
-                        System.out.println("Enter correct main menu item.\n*********************************");
+                        System.out.println("Enter correct viewer menu item.\n*********************************");
                     }
                     break;
             }
@@ -200,20 +184,6 @@ public class ViewerMenu {
                         System.out.println("Enter correct request menu item.\n*********************************");
                     }
                     break;
-            }
-        }
-    }
-
-    private boolean authorization() {
-        while (true) {
-            String name = IOUtil.readString("Enter name: ");
-            if (!name.equals("0")) {
-                String password = IOUtil.readString("Enter password: ");
-                if (viewerController.authorization(name, password)) {
-                    return true;
-                }
-            } else {
-                return false;
             }
         }
     }
@@ -399,9 +369,9 @@ public class ViewerMenu {
         long genreId;
         double amount;
         List<LocalDate> dates;
-        if ((genreId = getGenreId()) != 0){
+        if ((genreId = getGenreId()) != 0) {
             amount = getAmountOfOrdersViewer();
-            if ((dates = getDatePeriod()) != null){
+            if ((dates = getDatePeriod()) != null) {
                 viewerController.searchViewerByComplexQuery(genreId, amount, dates);
             }
         }

@@ -6,9 +6,11 @@ import java.util.List;
 public class MenuContent {
     private static List<String> headerMenu = new ArrayList<>();
     private static List<String> authorizationMenu  = new ArrayList<>();
-    private static List<String> mainMenu = new ArrayList<>();
+    private static List<String> viewerMenu = new ArrayList<>();
     private static List<String> searchMenu = new ArrayList<>();
     private static List<String> requestMenu = new ArrayList<>();
+    private static List<String> adminMenu = new ArrayList<>();
+    private static List<String> adminMenuCreate = new ArrayList<>();
     private static List<String> footerMenu = new ArrayList<>();
 
     private MenuContent() {
@@ -23,13 +25,13 @@ public class MenuContent {
         authorizationMenu.add("Log in");
         authorizationMenu.add("Exit");
 
-        mainMenu.add("MAIN MENU");
-        mainMenu.add("Search ticket");
-        mainMenu.add("Buy ticket");
-        mainMenu.add("Return ticket");
-        mainMenu.add("Search tickets by viewer");
-        mainMenu.add("Test request");
-        mainMenu.add("Exit");
+        viewerMenu.add("VIEWER MENU");
+        viewerMenu.add("Search ticket");
+        viewerMenu.add("Buy ticket");
+        viewerMenu.add("Return ticket");
+        viewerMenu.add("Search tickets by viewer");
+        viewerMenu.add("Test request");
+        viewerMenu.add("Exit");
 
         searchMenu.add("SEARCH MENU");
         searchMenu.add("Search tickets by movie title");
@@ -48,6 +50,22 @@ public class MenuContent {
         requestMenu.add("Search for dates on which more than 5 viewers have a birthday");
         requestMenu.add("Exit");
 
+        adminMenu.add("ADMIN MENU");
+        adminMenu.add("Create entity");
+        adminMenu.add("Select entity");
+        adminMenu.add("Update entity");
+        adminMenu.add("Delete entity");
+        adminMenu.add("Viewer menu");
+        adminMenu.add("Exit");
+
+        adminMenuCreate.add("CREATE MENU");
+        adminMenuCreate.add("Create genre");
+        adminMenuCreate.add("Create movie");
+        adminMenuCreate.add("Create seat");
+        adminMenuCreate.add("Create viewer");
+        adminMenuCreate.add("Create ticket");
+        adminMenuCreate.add("Exit");
+
         footerMenu.add("**************************************");
         footerMenu.add("-= THANK FOR USING OUR APPLICATION! =-");
         footerMenu.add("****-= ENJOY WATCHING THE MOVIE =-****");
@@ -61,8 +79,8 @@ public class MenuContent {
         return authorizationMenu;
     }
 
-    public static List<String> getMainMenu() {
-        return mainMenu;
+    public static List<String> getViewerMenu() {
+        return viewerMenu;
     }
 
     public static List<String> getSearchMenu() {
@@ -71,6 +89,14 @@ public class MenuContent {
 
     public static List<String> getRequestMenu() {
         return requestMenu;
+    }
+
+    public static List<String> getAdminMenu() {
+        return adminMenu;
+    }
+
+    public static List<String> getAdminMenuCreate() {
+        return adminMenuCreate;
     }
 
     public static List<String> getFooterMenu() {
