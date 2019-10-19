@@ -27,7 +27,7 @@
                 <constraints nullable="false" foreignKeyName="genre_id"
                              referencedTableName="genres" referencedColumnNames="id"/>
             </column>
-            <column name="cost" type="decimal"/>
+            <column name="cost" type="decimal" defaultValue="0.0"/>
         </createTable>
     </changeSet>
 
@@ -36,7 +36,7 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(50)">
+            <column name="type" type="varchar(50)">
                 <constraints unique="true" nullable="false"/>
             </column>
         </createTable>
@@ -97,7 +97,7 @@
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="date_time" type="date">
+            <column name="date_time" type="datetime">
                 <constraints nullable="false"/>
             </column>
             <column name="price" type="decimal">
