@@ -4,6 +4,7 @@ import com.abseliamov.cinemaservice.model.Movie;
 import com.abseliamov.cinemaservice.service.MovieService;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class MovieController {
     private MovieService movieService;
@@ -26,5 +27,9 @@ public class MovieController {
 
     public void searchLeastProfitableMovie() {
         movieService.searchLeastProfitableMovie();
+    }
+
+    public List<Movie> getAll() {
+        return movieService.getAll();
     }
 }

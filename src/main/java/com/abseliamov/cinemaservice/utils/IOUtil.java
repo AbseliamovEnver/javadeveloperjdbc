@@ -72,7 +72,7 @@ public class IOUtil {
     public static <T> void printMenuItem(List<T> menu) {
 
         if (menu != null) {
-            System.out.println("*********************************");
+            System.out.println("\n*********************************");
             for (int i = 0; i < menu.size(); i++) {
                 if (i == 0) {
                     System.out.println("\t" + menu.get(i) + "\n*********************************");

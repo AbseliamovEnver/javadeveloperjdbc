@@ -11,6 +11,9 @@ public class MenuContent {
     private static List<String> requestMenu = new ArrayList<>();
     private static List<String> adminMenu = new ArrayList<>();
     private static List<String> adminMenuCreate = new ArrayList<>();
+    private static List<String> adminMenuSelect = new ArrayList<>();
+    private static List<String> adminMenuUpdate = new ArrayList<>();
+    private static List<String> adminMenuDelete = new ArrayList<>();
     private static List<String> footerMenu = new ArrayList<>();
 
     private MenuContent() {
@@ -66,6 +69,30 @@ public class MenuContent {
         adminMenuCreate.add("Create ticket");
         adminMenuCreate.add("Exit");
 
+        adminMenuSelect.add("SELECT MENU");
+        adminMenuSelect.add("Select genre");
+        adminMenuSelect.add("Select movie");
+        adminMenuSelect.add("Select seat");
+        adminMenuSelect.add("Select viewer");
+        adminMenuSelect.add("Select ticket");
+        adminMenuSelect.add("Exit");
+
+        adminMenuUpdate.add("UPDATE MENU");
+        adminMenuUpdate.add("Update genre");
+        adminMenuUpdate.add("Update movie");
+        adminMenuUpdate.add("Update seat");
+        adminMenuUpdate.add("Update viewer");
+        adminMenuUpdate.add("Update ticket");
+        adminMenuUpdate.add("Exit");
+
+        adminMenuDelete.add("DELETE MENU");
+        adminMenuDelete.add("Delete genre");
+        adminMenuDelete.add("Delete movie");
+        adminMenuDelete.add("Delete seat");
+        adminMenuDelete.add("Delete viewer");
+        adminMenuDelete.add("Delete ticket");
+        adminMenuDelete.add("Exit");
+
         footerMenu.add("**************************************");
         footerMenu.add("-= THANK FOR USING OUR APPLICATION! =-");
         footerMenu.add("****-= ENJOY WATCHING THE MOVIE =-****");
@@ -97,6 +124,18 @@ public class MenuContent {
 
     public static List<String> getAdminMenuCreate() {
         return adminMenuCreate;
+    }
+
+    public static List<String> getAdminMenuSelect() {
+        return adminMenuSelect;
+    }
+
+    public static List<String> getAdminMenuUpdate() {
+        return adminMenuUpdate;
+    }
+
+    public static List<String> getAdminMenuDelete() {
+        return adminMenuDelete;
     }
 
     public static List<String> getFooterMenu() {

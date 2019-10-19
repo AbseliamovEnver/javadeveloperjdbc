@@ -2,6 +2,7 @@ package com.abseliamov.cinemaservice.service;
 
 import com.abseliamov.cinemaservice.dao.ViewerDaoImpl;
 import com.abseliamov.cinemaservice.model.GenericModel;
+import com.abseliamov.cinemaservice.model.Role;
 import com.abseliamov.cinemaservice.model.Viewer;
 import com.abseliamov.cinemaservice.utils.CurrentViewer;
 import com.google.common.collect.Multimap;
@@ -19,6 +20,7 @@ public class ViewerService {
     private CurrentViewer currentViewer;
     private static final String ERROR_NAME_OR_PASSWORD =
             "Please enter correct username and password or enter \'0\' to exit:";
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
     public ViewerService(ViewerDaoImpl viewerDao, CurrentViewer currentViewer) {
         this.viewerDao = viewerDao;
@@ -42,9 +44,38 @@ public class ViewerService {
     }
 
     public List<Viewer> getAll() {
+        Role role = currentViewer.getViewer().getRole();
         List<Viewer> viewerList = viewerDao.getAll();
-        printViewer(viewerList);
+        if (role == Role.ADMIN) {
+            printViewerForAdmin(viewerList);
+        } else if (role == Role.USER) {
+            printViewer(viewerList);
+        }
         return viewerList;
+    }
+
+    private void printViewerForAdmin(List<Viewer> viewerList) {
+        if (!viewerList.isEmpty()) {
+            System.out.println("\n|-------------------------------------------------------------------" +
+                    "-----------------------------------|");
+            System.out.printf("%-45s%-1s\n", " ", "LIST OF VIEWERS");
+            System.out.println("|---------------------------------------------------------------------" +
+                    "---------------------------------|");
+            System.out.printf("%-3s%-12s%-23s%-22s%-19s%-13s%-1s\n",
+                    " ", "ID", "FIRST NAME", "LAST NAME", "PASSWORD", "ROLE", "BIRTHDAY");
+            System.out.println("|-------|---------------------|----------------------|----------------" +
+                    "---|--------------|--------------|");
+            viewerList.stream()
+                    .sorted(Comparator.comparing(GenericModel::getId))
+                    .collect(Collectors.toList())
+                    .forEach(viewer -> System.out.printf("%-2s%-8s%-22s%-24s%-20s%-14s%-1s\n%-1s",
+                            " ", viewer.getId(), viewer.getName(), viewer.getLastName(), viewer.getPassword(),
+                            viewer.getRole(), formatter.format(viewer.getBirthday()),
+                            "|-------|---------------------|----------------------|----------------" +
+                                    "---|--------------|--------------|\n"));
+        } else {
+            System.out.println("List viewers is empty.");
+        }
     }
 
     private void printViewer(List<Viewer> viewerList) {
@@ -89,7 +120,6 @@ public class ViewerService {
     }
 
     private void printViewerByRequest(List<Viewer> viewers) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         if (!viewers.isEmpty()) {
             System.out.println("|------------------------------------------------------------|");
             System.out.printf("%-27s%-1s\n", " ", "REQUEST RESULT");
@@ -106,7 +136,6 @@ public class ViewerService {
     }
 
     private void printMapWithListBirthday(Multimap<String, Viewer> dateListMap) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         if (!dateListMap.isEmpty()) {
             System.out.println("|------------------------------------------------------------|");
             System.out.printf("%-24s%-1s\n", " ", "REQUEST RESULT");

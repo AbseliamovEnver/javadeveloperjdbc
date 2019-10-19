@@ -4,6 +4,7 @@ import com.abseliamov.cinemaservice.dao.TicketDaoImpl;
 import com.abseliamov.cinemaservice.dao.ViewerDaoImpl;
 import com.abseliamov.cinemaservice.model.Ticket;
 import com.abseliamov.cinemaservice.model.Viewer;
+import com.abseliamov.cinemaservice.utils.CurrentViewer;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,10 +14,12 @@ import java.util.stream.Collectors;
 public class TicketService {
     private TicketDaoImpl ticketDao;
     private ViewerDaoImpl viewerDao;
+    private CurrentViewer currentViewer;
 
-    public TicketService(TicketDaoImpl ticketDao, ViewerDaoImpl viewerDao) {
+    public TicketService(TicketDaoImpl ticketDao, ViewerDaoImpl viewerDao, CurrentViewer currentViewer) {
         this.ticketDao = ticketDao;
         this.viewerDao = viewerDao;
+        this.currentViewer = currentViewer;
     }
 
     public List<Ticket> getTicketByMovieTitle(String movieTitle) {
@@ -111,6 +114,16 @@ public class TicketService {
             System.out.println("");
         }
         return result;
+    }
+
+    public List<Ticket> getAll() {
+        return ticketDao.getAll();
+    }
+
+    public List<Ticket> getAllTicket() {
+        List<Ticket> tickets = ticketDao.getAll();
+        printTicket(tickets);
+        return tickets;
     }
 
     private void printAllDate(Map<LocalDate, Long> dateList) {

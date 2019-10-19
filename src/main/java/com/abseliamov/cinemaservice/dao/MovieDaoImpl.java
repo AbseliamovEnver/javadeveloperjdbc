@@ -21,7 +21,7 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
     public Movie createEntity(ResultSet resultSet) throws SQLException {
         return new Movie(
                 resultSet.getLong("id"),
-                resultSet.getString("name"),
+                resultSet.getString("title"),
                 genreDao.getById(resultSet.getLong("genre_id")),
                 resultSet.getBigDecimal("cost"));
     }
@@ -91,7 +91,7 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
     private Movie createMovieByRequest(ResultSet resultSet) throws SQLException {
         return new Movie(
                 resultSet.getLong("id"),
-                resultSet.getString("name"),
+                resultSet.getString("title"),
                 resultSet.getBigDecimal("total_price"));
     }
 }

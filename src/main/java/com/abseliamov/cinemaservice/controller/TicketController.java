@@ -61,4 +61,12 @@ public class TicketController {
     public boolean checkTicketAvailable(long ticketId) {
         return ticketService.checkTicketAvailable(ticketId);
     }
+
+    public List<Ticket> getAll() {
+        return ticketService.getAll();
+    }
+
+    public List<Ticket> getAllTicket() {
+        return ticketService.getAllTicket();
+    }
 }

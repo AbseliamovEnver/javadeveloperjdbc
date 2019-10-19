@@ -15,6 +15,24 @@ public class GenreService {
         this.genreDao = genreDao;
     }
 
+    public void createGenre(String genreName) {
+        Genre newGenre = null;
+        List<Genre> genreList = genreDao.getAll();
+        if (!genreList.isEmpty()) {
+            newGenre = genreList
+                    .stream()
+                    .filter(genre -> genre.getName().equalsIgnoreCase(genreName))
+                    .findFirst()
+                    .orElse(null);
+        }
+        if (newGenre == null) {
+            genreDao.add(new Genre(0, genreName));
+            System.out.println("Genre with name \'" + genreName + "\' successfully added.");
+        } else {
+            System.out.println("Such a genre already exists.");
+        }
+    }
+
     public List<Genre> getAll() {
         List<Genre> genreList = genreDao.getAll();
         if (!genreList.isEmpty()) {
