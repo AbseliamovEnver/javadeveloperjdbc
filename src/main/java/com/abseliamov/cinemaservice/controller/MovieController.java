@@ -30,6 +30,10 @@ public class MovieController {
         movieService.update(movieId, movieTitle, genre, cost);
     }
 
+    public void deleteMovie(long movieId) {
+        movieService.delete(movieId);
+    }
+
     public boolean increaseCostMovie(BigDecimal ticketCost, Movie movie) {
         return movieService.increaseCostMovie(ticketCost, movie);
     }
@@ -38,7 +42,7 @@ public class MovieController {
         return movieService.reduceCostMovie(ticketCost, movie);
     }
 
-    public void searchMostProfitableMovie(){
+    public void searchMostProfitableMovie() {
         movieService.searchMostProfitableMovie();
     }
 

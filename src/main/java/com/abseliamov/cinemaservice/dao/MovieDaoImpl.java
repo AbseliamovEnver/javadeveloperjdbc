@@ -10,7 +10,7 @@ import java.util.List;
 
 public class MovieDaoImpl extends AbstractDao<Movie> {
     private static final String ERROR_MESSAGE = "Cannot connect to database: ";
-    Connection connection = ConnectionUtil.getConnection();
+    private Connection connection = ConnectionUtil.getConnection();
     private GenreDaoImpl genreDao;
 
     public MovieDaoImpl(Connection connection, GenreDaoImpl genreDao, String tableName) {
@@ -56,11 +56,6 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
             System.out.println(e);
         }
         return updateExist;
-    }
-
-    @Override
-    public boolean delete(long id) {
-        return false;
     }
 
     public List<Movie> searchMostProfitableMovie() {

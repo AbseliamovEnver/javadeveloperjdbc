@@ -175,6 +175,10 @@ public class AdminMenu extends ViewerMenu {
                     deleteGenre();
                     deleteMenuItem = -1;
                     break;
+                case 2:
+                    deleteMovie();
+                    deleteMenuItem = -1;
+                    break;
 
                 default:
                     if (deleteMenuItem >= MenuContent.getAdminMenuDelete().size() - 1) {
@@ -250,6 +254,15 @@ public class AdminMenu extends ViewerMenu {
             long genreId = IOUtil.readNumber("Select genre id to delete: ");
             if (genreController.getById(genreId) != null) {
                 genreController.deleteGenre(genreId);
+            }
+        }
+    }
+
+    private void deleteMovie() {
+        if (movieController.getAll() != null) {
+            long movieId = IOUtil.readNumber("Select movie id to delete: ");
+            if (movieController.getById(movieId) != null) {
+                movieController.deleteMovie(movieId);
             }
         }
     }

@@ -47,6 +47,12 @@ public class MovieService {
         movieDao.update(movieId, new Movie(movieId, movieTitle, genre, cost.setScale(2, RoundingMode.DOWN)));
     }
 
+    public void delete(long movieId) {
+        if (movieDao.delete(movieId)) {
+            System.out.println("Movie with id \'" + movieId + "\' deleted.");
+        }
+    }
+
     public boolean increaseCostMovie(BigDecimal ticketCost, Movie movie) {
         long movieId = movie.getId();
         Movie newMovie = new Movie(movieId, movie.getName(), movie.getGenre(),
