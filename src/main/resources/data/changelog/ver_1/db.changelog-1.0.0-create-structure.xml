@@ -17,7 +17,7 @@
 
     <changeSet id="create_table_movies" author="enver">
         <createTable tableName="movies">
-            <column name="id" type="bigint">
+            <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="title" type="varchar(100)">
@@ -27,7 +27,7 @@
                 <constraints nullable="false" foreignKeyName="genre_id"
                              referencedTableName="genres" referencedColumnNames="id"/>
             </column>
-            <column name="cost" type="decimal" defaultValue="0.0"/>
+            <column name="cost" type="decimal(5,2)" defaultValue="0.00"/>
         </createTable>
     </changeSet>
 
@@ -100,7 +100,7 @@
             <column name="date_time" type="datetime">
                 <constraints nullable="false"/>
             </column>
-            <column name="price" type="decimal">
+            <column name="price" type="decimal(3,2)">
                 <constraints nullable="false"/>
             </column>
             <column name="buy_status" type="int">

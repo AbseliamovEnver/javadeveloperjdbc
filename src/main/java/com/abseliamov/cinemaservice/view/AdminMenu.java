@@ -1,7 +1,11 @@
 package com.abseliamov.cinemaservice.view;
 
 import com.abseliamov.cinemaservice.controller.*;
+import com.abseliamov.cinemaservice.model.Genre;
+import com.abseliamov.cinemaservice.model.Movie;
 import com.abseliamov.cinemaservice.utils.IOUtil;
+
+import java.math.BigDecimal;
 
 public class AdminMenu extends ViewerMenu {
     private GenreController genreController;
@@ -75,6 +79,16 @@ public class AdminMenu extends ViewerMenu {
                     createGenre();
                     createMenuItem = -1;
                     break;
+                case 2:
+                    createMovie();
+                    createMenuItem = -1;
+                    break;
+                default:
+                    if (createMenuItem >= MenuContent.getAdminMenuCreate().size() - 1) {
+                        createMenuItem = -1;
+                        System.out.println("Enter correct create menu item.\n*********************************");
+                    }
+                    break;
             }
         }
     }
@@ -120,15 +134,123 @@ public class AdminMenu extends ViewerMenu {
     }
 
     private long updateMenu() {
-        return 0;
+        long updateMenuItem = -1;
+        while (true) {
+            if (updateMenuItem == -1) {
+                IOUtil.printMenuItem(MenuContent.getAdminMenuUpdate());
+                updateMenuItem = IOUtil.getValidLongInputData("Select UPDATE MENU item: ");
+            }
+            switch ((int) updateMenuItem) {
+                case 0:
+                    return -1;
+                case 1:
+                    updateGenre();
+                    updateMenuItem = -1;
+                    break;
+                case 2:
+                    updateMovie();
+                    updateMenuItem = -1;
+                    break;
+                default:
+                    if (updateMenuItem >= MenuContent.getAdminMenuUpdate().size() - 1) {
+                        updateMenuItem = -1;
+                        System.out.println("Enter correct update menu item.\n*********************************");
+                    }
+                    break;
+            }
+        }
     }
 
     private long deleteMenu() {
-        return 0;
+        long deleteMenuItem = -1;
+        while (true) {
+            if (deleteMenuItem == -1) {
+                IOUtil.printMenuItem(MenuContent.getAdminMenuDelete());
+                deleteMenuItem = IOUtil.getValidLongInputData("Select DELETE MENU item: ");
+            }
+            switch ((int) deleteMenuItem) {
+                case 0:
+                    return -1;
+                case 1:
+                    deleteGenre();
+                    deleteMenuItem = -1;
+                    break;
+
+                default:
+                    if (deleteMenuItem >= MenuContent.getAdminMenuDelete().size() - 1) {
+                        deleteMenuItem = -1;
+                        System.out.println("Enter correct delete menu item.\n*********************************");
+                    }
+                    break;
+            }
+        }
     }
 
     private void createGenre() {
-        String genreName = IOUtil.readString("Enter new genre name:");
-        genreController.createGenre(genreName);
+        String genreName = IOUtil.readString("Enter new genre name or \'0\' to return: ");
+        if (!genreName.equals("0")) {
+            genreController.createGenre(genreName);
+        }
+    }
+
+    private void createMovie() {
+        Genre genre;
+        String movieTitle = IOUtil.readString("Enter new movie title or \'0\' to return: ");
+        if (!movieTitle.equals("0") && genreController.getAll() != null) {
+            long genreId = IOUtil.readNumber("Select movie genre ID or \'0\' to return:");
+            if (genreId != 0 && (genre = genreController.getById(genreId)) != null) {
+                movieController.createMovie(movieTitle, genre);
+            }
+        }
+    }
+
+    private void updateGenre() {
+        String updateGenreName;
+        if (genreController.getAll() != null) {
+            long genreId = IOUtil.readNumber("Select genre id to update: ");
+            if (genreController.getById(genreId) != null) {
+                updateGenreName = IOUtil.readString("Enter a new name for the genre to update: ");
+                genreController.updateGenre(genreId, updateGenreName);
+            }
+        }
+    }
+
+    private void updateMovie() {
+        Movie movie;
+        Genre genre = null;
+        BigDecimal cost = null;
+        String movieTitle = null;
+        if (movieController.getAll() != null) {
+            long movieId = IOUtil.readNumber("Select movie id to update: ");
+            if ((movie = movieController.getById(movieId)) != null) {
+                movieTitle = IOUtil.readString("Enter a new title for the movie to update " +
+                        "or press \'ENTER\' key to continue: ");
+                movieTitle = movieTitle.equals("") ? movie.getName() : movieTitle;
+                genreController.getAll();
+                String genreStr = IOUtil.readString("Select genre id to update or press \'ENTER\' key to continue: ");
+                if (genreStr.equals("")) {
+                    genre = movie.getGenre();
+                } else {
+                    genre = genreController.getById(Long.parseLong(genreStr));
+                }
+                String costStr = IOUtil.readString("Enter a new cost for the movie to update " +
+                        "or press \'ENTER\' key to continue: ");
+                if (costStr.equals("")) {
+                    cost = movie.getCost();
+                } else {
+                    cost = new BigDecimal(costStr);
+                }
+            }
+            movieController.updateMovie(movieId, movieTitle, genre, cost);
+        }
+    }
+
+    private void deleteGenre() {
+        if (genreController.getAll() != null) {
+            long genreId = IOUtil.readNumber("Select genre id to delete: ");
+            if (genreController.getById(genreId) != null) {
+                genreController.deleteGenre(genreId);
+            }
+        }
     }
 }

@@ -33,6 +33,14 @@ public class GenreService {
         }
     }
 
+    public Genre getById(long genreId) {
+        List<Genre> genres = genreDao.getAll();
+        return genres.stream()
+                .filter(genre -> genre.getId() == genreId)
+                .findFirst()
+                .orElse(null);
+    }
+
     public List<Genre> getAll() {
         List<Genre> genreList = genreDao.getAll();
         if (!genreList.isEmpty()) {
@@ -50,5 +58,26 @@ public class GenreService {
             System.out.println("Genre list is empty.");
         }
         return genreList;
+    }
+
+    public void updateGenre(long genreId, String updateGenreName) {
+        List<Genre> genres = genreDao.getAll();
+        Genre genre = genres.stream()
+                .filter(genreItem -> genreItem.getName().equalsIgnoreCase(updateGenreName))
+                .findFirst()
+                .orElse(null);
+        if (genre == null) {
+            if (genreDao.update(genreId, new Genre(genreId, updateGenreName))) {
+                System.out.println("Update successfully.");
+            }
+        } else {
+            System.out.println("Genre with name \'" + updateGenreName + "\' already exists.");
+        }
+    }
+
+    public void delete(long genreId) {
+        if (genreDao.delete(genreId)){
+            System.out.println("Genre with id \'" + genreId + "\' deleted.");
+        }
     }
 }
