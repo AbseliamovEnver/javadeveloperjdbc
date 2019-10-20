@@ -15,4 +15,8 @@ public class SeatTypesService {
     public List<SeatTypes> getAllSeatType() {
         return seatTypesDao.getAll();
     }
+
+    public SeatTypes getById(long seatTypeId) {
+        return seatTypesDao.getById(seatTypeId);
+    }
 }

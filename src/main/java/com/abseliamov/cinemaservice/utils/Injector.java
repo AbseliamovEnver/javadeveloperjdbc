@@ -51,7 +51,7 @@ public class Injector {
             genreController, seatController, seatTypesController, movieController);
 
     private static AdminMenu adminMenu = new AdminMenu(genreController, movieController, seatController,
-            viewerController, ticketController, viewerMenu);
+            viewerController, ticketController, seatTypesController, viewerMenu);
 
     private static AuthorizationMenu authorizationMenu = new AuthorizationMenu(adminMenu, viewerMenu,
             viewerController, currentViewer);

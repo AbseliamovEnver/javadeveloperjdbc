@@ -15,4 +15,8 @@ public class SeatTypesController {
     public List<SeatTypes> getAllSeatType() {
         return seatTypesService.getAllSeatType();
     }
+
+    public SeatTypes getById(long seatTypeId){
+        return seatTypesService.getById(seatTypeId);
+    }
 }

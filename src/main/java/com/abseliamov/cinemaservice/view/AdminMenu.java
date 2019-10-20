@@ -3,6 +3,8 @@ package com.abseliamov.cinemaservice.view;
 import com.abseliamov.cinemaservice.controller.*;
 import com.abseliamov.cinemaservice.model.Genre;
 import com.abseliamov.cinemaservice.model.Movie;
+import com.abseliamov.cinemaservice.model.Seat;
+import com.abseliamov.cinemaservice.model.SeatTypes;
 import com.abseliamov.cinemaservice.utils.IOUtil;
 
 import java.math.BigDecimal;
@@ -13,17 +15,20 @@ public class AdminMenu extends ViewerMenu {
     private SeatController seatController;
     private ViewerController viewerController;
     private TicketController ticketController;
+    private SeatTypesController seatTypesController;
     private ViewerMenu viewerMenu;
 
     public AdminMenu(GenreController genreController, MovieController movieController,
                      SeatController seatController, ViewerController viewerController,
-                     TicketController ticketController, ViewerMenu viewerMenu) {
+                     TicketController ticketController, SeatTypesController seatTypesController,
+                     ViewerMenu viewerMenu) {
         super();
         this.genreController = genreController;
         this.movieController = movieController;
         this.seatController = seatController;
         this.viewerController = viewerController;
         this.ticketController = ticketController;
+        this.seatTypesController = seatTypesController;
         this.viewerMenu = viewerMenu;
     }
 
@@ -81,6 +86,10 @@ public class AdminMenu extends ViewerMenu {
                     break;
                 case 2:
                     createMovie();
+                    createMenuItem = -1;
+                    break;
+                case 3:
+                    createSeat();
                     createMenuItem = -1;
                     break;
                 default:
@@ -151,6 +160,10 @@ public class AdminMenu extends ViewerMenu {
                     updateMovie();
                     updateMenuItem = -1;
                     break;
+                case 3:
+                    updateSeat();
+                    updateMenuItem = -1;
+                    break;
                 default:
                     if (updateMenuItem >= MenuContent.getAdminMenuUpdate().size() - 1) {
                         updateMenuItem = -1;
@@ -179,7 +192,10 @@ public class AdminMenu extends ViewerMenu {
                     deleteMovie();
                     deleteMenuItem = -1;
                     break;
-
+                case 3:
+                    deleteSeat();
+                    deleteMenuItem = -1;
+                    break;
                 default:
                     if (deleteMenuItem >= MenuContent.getAdminMenuDelete().size() - 1) {
                         deleteMenuItem = -1;
@@ -208,11 +224,27 @@ public class AdminMenu extends ViewerMenu {
         }
     }
 
+    private void createSeat() {
+        SeatTypes seatType = null;
+        long seatNumber = IOUtil.readNumber("Enter seat number or enter \'0\' to return: ");
+        if (seatNumber != 0 && seatTypesController.getAllSeatType() != null) {
+            long seatTypeId = IOUtil.readNumber("Select seat type id or enter \'0\' to return: ");
+            if (seatTypeId != 0) {
+                for (SeatTypes seatTypesItem : SeatTypes.values()) {
+                    if (seatTypesItem.getId() == seatTypeId) {
+                        seatType = seatTypesItem;
+                    }
+                }
+                seatController.createSeat(seatNumber, seatType);
+            }
+        }
+    }
+
     private void updateGenre() {
         String updateGenreName;
         if (genreController.getAll() != null) {
-            long genreId = IOUtil.readNumber("Select genre id to update: ");
-            if (genreController.getById(genreId) != null) {
+            long genreId = IOUtil.readNumber("Select genre id to update or enter \'0\' to return: ");
+            if (genreId != 0 && genreController.getById(genreId) != null) {
                 updateGenreName = IOUtil.readString("Enter a new name for the genre to update: ");
                 genreController.updateGenre(genreId, updateGenreName);
             }
@@ -225,8 +257,8 @@ public class AdminMenu extends ViewerMenu {
         BigDecimal cost = null;
         String movieTitle = null;
         if (movieController.getAll() != null) {
-            long movieId = IOUtil.readNumber("Select movie id to update: ");
-            if ((movie = movieController.getById(movieId)) != null) {
+            long movieId = IOUtil.readNumber("Select movie id to update or enter \'0\' to return: ");
+            if (movieId != 0 && (movie = movieController.getById(movieId)) != null) {
                 movieTitle = IOUtil.readString("Enter a new title for the movie to update " +
                         "or press \'ENTER\' key to continue: ");
                 movieTitle = movieTitle.equals("") ? movie.getName() : movieTitle;
@@ -249,10 +281,30 @@ public class AdminMenu extends ViewerMenu {
         }
     }
 
+    private void updateSeat() {
+        Seat seat;
+        SeatTypes seatType;
+        long seatTypeId = 0;
+        if (seatController.getAll() != null) {
+            long seatId = IOUtil.readNumber("Select seat id to update or enter \'0\' to return: ");
+            if (seatId != 0 && (seat = seatController.getById(seatId)) != null) {
+                seatTypesController.getAllSeatType();
+                String seatTypeStr = IOUtil.readString("Enter a new seat type to update " +
+                        "or press \'ENTER\' key to continue: ");
+                seatTypeId = seatTypeStr.equals("") ? seat.getSeatTypes().getId() : Long.parseLong(seatTypeStr);
+                if ((seatType = seatTypesController.getById(seatTypeId)) != null) {
+                    long seatNumber = IOUtil.readNumber("Enter a new seat number to update " +
+                            "or press \'ENTER\' key to continue: ");
+                    seatController.updateSeat(seatId, seatType, seatNumber);
+                }
+            }
+        }
+    }
+
     private void deleteGenre() {
         if (genreController.getAll() != null) {
-            long genreId = IOUtil.readNumber("Select genre id to delete: ");
-            if (genreController.getById(genreId) != null) {
+            long genreId = IOUtil.readNumber("Select genre id to delete or enter \'0\' to return: ");
+            if (genreId != 0 && genreController.getById(genreId) != null) {
                 genreController.deleteGenre(genreId);
             }
         }
@@ -260,9 +312,18 @@ public class AdminMenu extends ViewerMenu {
 
     private void deleteMovie() {
         if (movieController.getAll() != null) {
-            long movieId = IOUtil.readNumber("Select movie id to delete: ");
-            if (movieController.getById(movieId) != null) {
+            long movieId = IOUtil.readNumber("Select movie id to delete or enter \'0\' to return: ");
+            if (movieId != 0 && movieController.getById(movieId) != null) {
                 movieController.deleteMovie(movieId);
+            }
+        }
+    }
+
+    private void deleteSeat() {
+        if (seatController.getAll() != null) {
+            long seatId = IOUtil.readNumber("Select seat id to delete or enter \'0\' to return: ");
+            if (seatId != 0 && seatController.getById(seatId) != null){
+                seatController.deleteSeat(seatId);
             }
         }
     }

@@ -37,7 +37,7 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
             statement.setBigDecimal(4, movie.getCost().setScale(2, RoundingMode.DOWN));
             statement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println(ERROR_MESSAGE + e);
         }
     }
 
@@ -53,7 +53,7 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
             statement.executeUpdate();
             updateExist = true;
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println(ERROR_MESSAGE + e);
         }
         return updateExist;
     }
@@ -74,7 +74,7 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
                 movies.add(createMovieByRequest(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(ERROR_MESSAGE + e);
         }
         return movies;
     }
@@ -95,7 +95,7 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
                 movies.add(createMovieByRequest(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(ERROR_MESSAGE + e);
         }
         return movies;
     }
