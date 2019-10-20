@@ -7,12 +7,9 @@ import com.abseliamov.cinemaservice.model.Viewer;
 import com.abseliamov.cinemaservice.utils.CurrentViewer;
 import com.google.common.collect.Multimap;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ViewerService {
@@ -20,11 +17,29 @@ public class ViewerService {
     private CurrentViewer currentViewer;
     private static final String ERROR_NAME_OR_PASSWORD =
             "Please enter correct username and password or enter \'0\' to exit:";
-    private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     public ViewerService(ViewerDaoImpl viewerDao, CurrentViewer currentViewer) {
         this.viewerDao = viewerDao;
         this.currentViewer = currentViewer;
+    }
+
+    public boolean createViewer(String firstName, String lastName, String password, Role role, LocalDate birthday) {
+        List<Viewer> viewers = viewerDao.getAll();
+        Viewer viewer = viewers
+                .stream()
+                .filter(viewerItem -> viewerItem.getName().equalsIgnoreCase(firstName) &&
+                        viewerItem.getLastName().equalsIgnoreCase(lastName))
+                .findFirst()
+                .orElse(null);
+        if (viewer == null) {
+            viewerDao.add(new Viewer(0, firstName, lastName, password, role, birthday));
+            System.out.println("Viewer with name \'" + firstName + "\' successfully added.");
+            return true;
+        } else {
+            System.out.println("Such viewer already exists.");
+        }
+        return false;
     }
 
     public boolean authorization(String name, String password) {
@@ -43,6 +58,10 @@ public class ViewerService {
         return checkUser;
     }
 
+    public Viewer getById(long viewerId) {
+        return viewerDao.getById(viewerId);
+    }
+
     public List<Viewer> getAll() {
         Role role = currentViewer.getViewer().getRole();
         List<Viewer> viewerList = viewerDao.getAll();
@@ -52,6 +71,28 @@ public class ViewerService {
             printViewer(viewerList);
         }
         return viewerList;
+    }
+
+    public void update(long viewerId, String firstName, String lastName,
+                       String password, LocalDate birthday, Role role) {
+        List<Viewer> viewers = viewerDao.getAll();
+        Viewer updateViewer = new Viewer(viewerId, firstName, lastName, password, role, birthday);
+        Viewer viewer = viewers
+                .stream()
+                .filter(viewerItem -> viewerItem.equals(updateViewer))
+                .findFirst()
+                .orElse(null);
+        if (viewer == null) {
+            if (viewerDao.update(viewerId, updateViewer)) {
+                System.out.println("Update successfully.");
+            }
+        }
+    }
+
+    public void delete(long viewerId) {
+        if (viewerDao.delete(viewerId)) {
+            System.out.println("Viewer with id \'" + viewerId + "\' deleted.");
+        }
     }
 
     private void printViewerForAdmin(List<Viewer> viewerList) {
@@ -70,7 +111,7 @@ public class ViewerService {
                     .collect(Collectors.toList())
                     .forEach(viewer -> System.out.printf("%-2s%-8s%-22s%-24s%-20s%-14s%-1s\n%-1s",
                             " ", viewer.getId(), viewer.getName(), viewer.getLastName(), viewer.getPassword(),
-                            viewer.getRole(), formatter.format(viewer.getBirthday()),
+                            viewer.getRole().name(), formatter.format(viewer.getBirthday()),
                             "|-------|---------------------|----------------------|----------------" +
                                     "---|--------------|--------------|\n"));
         } else {

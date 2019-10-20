@@ -1,13 +1,11 @@
 package com.abseliamov.cinemaservice.view;
 
 import com.abseliamov.cinemaservice.controller.*;
-import com.abseliamov.cinemaservice.model.Genre;
-import com.abseliamov.cinemaservice.model.Movie;
-import com.abseliamov.cinemaservice.model.Seat;
-import com.abseliamov.cinemaservice.model.SeatTypes;
+import com.abseliamov.cinemaservice.model.*;
 import com.abseliamov.cinemaservice.utils.IOUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class AdminMenu extends ViewerMenu {
     private GenreController genreController;
@@ -16,12 +14,13 @@ public class AdminMenu extends ViewerMenu {
     private ViewerController viewerController;
     private TicketController ticketController;
     private SeatTypesController seatTypesController;
+    private RoleController roleController;
     private ViewerMenu viewerMenu;
 
     public AdminMenu(GenreController genreController, MovieController movieController,
                      SeatController seatController, ViewerController viewerController,
                      TicketController ticketController, SeatTypesController seatTypesController,
-                     ViewerMenu viewerMenu) {
+                     RoleController roleController, ViewerMenu viewerMenu) {
         super();
         this.genreController = genreController;
         this.movieController = movieController;
@@ -29,6 +28,7 @@ public class AdminMenu extends ViewerMenu {
         this.viewerController = viewerController;
         this.ticketController = ticketController;
         this.seatTypesController = seatTypesController;
+        this.roleController = roleController;
         this.viewerMenu = viewerMenu;
     }
 
@@ -90,6 +90,14 @@ public class AdminMenu extends ViewerMenu {
                     break;
                 case 3:
                     createSeat();
+                    createMenuItem = -1;
+                    break;
+                case 4:
+                    createViewer();
+                    createMenuItem = -1;
+                    break;
+                case 5:
+                    createTicket();
                     createMenuItem = -1;
                     break;
                 default:
@@ -164,6 +172,10 @@ public class AdminMenu extends ViewerMenu {
                     updateSeat();
                     updateMenuItem = -1;
                     break;
+                case 4:
+                    updateViewer();
+                    updateMenuItem = -1;
+                    break;
                 default:
                     if (updateMenuItem >= MenuContent.getAdminMenuUpdate().size() - 1) {
                         updateMenuItem = -1;
@@ -194,6 +206,10 @@ public class AdminMenu extends ViewerMenu {
                     break;
                 case 3:
                     deleteSeat();
+                    deleteMenuItem = -1;
+                    break;
+                case 4:
+                    deleteViewer();
                     deleteMenuItem = -1;
                     break;
                 default:
@@ -240,6 +256,26 @@ public class AdminMenu extends ViewerMenu {
         }
     }
 
+    private void createViewer() {
+        long roleId;
+        Role role;
+        String firstName = IOUtil.readString("Enter first name: ");
+        String lastName = IOUtil.readString("Enter last name: ");
+        String password = IOUtil.readString("Enter password: ");
+        LocalDate birthday = IOUtil.readDate("Enter your birthday in format dd-mm-yyyy or enter \'0\' to return: ");
+        if (birthday != null && roleController.getAll() != null) {
+            roleController.printAllRoles();
+            roleId = IOUtil.readNumber("Select role id: ");
+            if (roleId != 0 && (role = roleController.getById(roleId)) != null) {
+                viewerController.createViewer(firstName, lastName, password, role, birthday);
+            }
+        }
+    }
+
+    private void createTicket() {
+
+    }
+
     private void updateGenre() {
         String updateGenreName;
         if (genreController.getAll() != null) {
@@ -284,7 +320,7 @@ public class AdminMenu extends ViewerMenu {
     private void updateSeat() {
         Seat seat;
         SeatTypes seatType;
-        long seatTypeId = 0;
+        long seatTypeId;
         if (seatController.getAll() != null) {
             long seatId = IOUtil.readNumber("Select seat id to update or enter \'0\' to return: ");
             if (seatId != 0 && (seat = seatController.getById(seatId)) != null) {
@@ -296,6 +332,36 @@ public class AdminMenu extends ViewerMenu {
                     long seatNumber = IOUtil.readNumber("Enter a new seat number to update " +
                             "or press \'ENTER\' key to continue: ");
                     seatController.updateSeat(seatId, seatType, seatNumber);
+                }
+            }
+        }
+    }
+
+    private void updateViewer() {
+        Viewer viewer;
+        Role role;
+        if (viewerController.getAll() != null) {
+            long viewerId = IOUtil.readNumber("Select viewer id to update or enter \'0\' to return: ");
+            if (viewerId != 0 && (viewer = viewerController.getById(viewerId)) != null) {
+                String firstName = IOUtil.readString("Enter a new first name to update " +
+                        "or press \'ENTER\' key to continue: ");
+                String lastName = IOUtil.readString("Enter a new last name to update " +
+                        "or press \'ENTER\' key to continue: ");
+                String password = IOUtil.readString("Enter a new password to update " +
+                        "or press \'ENTER\' key to continue: ");
+                LocalDate birthday = IOUtil.readDate("Enter a new birthday in format dd-mm-yyyy " +
+                        "or enter \'0\' to continue: ");
+                roleController.printAllRoles();
+                long roleId = IOUtil.readNumber("Select a new role id to update " +
+                        "or enter \'0\' to continue: ");
+                firstName = firstName.equals("") ? viewer.getName() : firstName;
+                lastName = lastName.equals("") ? viewer.getLastName() : lastName;
+                password = password.equals("") ? viewer.getPassword() : password;
+                birthday = birthday == null ? viewer.getBirthday() : birthday;
+                roleId = roleId == 0 ? viewer.getRole().getId() : roleId;
+                if ((role = roleController.getById(roleId)) != null) {
+                    viewerController.updateViewer(viewerId, firstName, lastName,
+                            password, birthday, role);
                 }
             }
         }
@@ -322,8 +388,17 @@ public class AdminMenu extends ViewerMenu {
     private void deleteSeat() {
         if (seatController.getAll() != null) {
             long seatId = IOUtil.readNumber("Select seat id to delete or enter \'0\' to return: ");
-            if (seatId != 0 && seatController.getById(seatId) != null){
+            if (seatId != 0 && seatController.getById(seatId) != null) {
                 seatController.deleteSeat(seatId);
+            }
+        }
+    }
+
+    private void deleteViewer() {
+        if (viewerController.getAll() != null) {
+            long viewerId = IOUtil.readNumber("Select viewer id to delete or enter \'0\' to return: ");
+            if (viewerId != 0 && viewerController.getById(viewerId) != null) {
+                viewerController.deleteSeat(viewerId);
             }
         }
     }

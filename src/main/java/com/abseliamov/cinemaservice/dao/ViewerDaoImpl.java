@@ -1,5 +1,6 @@
 package com.abseliamov.cinemaservice.dao;
 
+import com.abseliamov.cinemaservice.exceptions.ConnectionException;
 import com.abseliamov.cinemaservice.model.Role;
 import com.abseliamov.cinemaservice.model.Viewer;
 import com.abseliamov.cinemaservice.utils.ConnectionUtil;
@@ -13,10 +14,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewerDaoImpl extends AbstractDao<Viewer> {
+    private static final String ERROR_MESSAGE = "Cannot connect to database: ";
     Connection connection = ConnectionUtil.getConnection();
 
     public ViewerDaoImpl(Connection connection, String tableName) {
         super(connection, tableName);
+    }
+
+    @Override
+    public void add(Viewer viewer) {
+        try (PreparedStatement statement = connection
+                .prepareStatement("INSERT INTO viewers VALUES(?,?,?,?,?,?)")) {
+            statement.setLong(1, viewer.getId());
+            statement.setString(2, viewer.getName());
+            statement.setString(3, viewer.getLastName());
+            statement.setString(4, viewer.getPassword());
+            statement.setDate(5, Date.valueOf(viewer.getBirthday()));
+            statement.setLong(6, viewer.getRole().getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(ERROR_MESSAGE + e);
+        }
     }
 
     @Override
@@ -32,7 +50,7 @@ public class ViewerDaoImpl extends AbstractDao<Viewer> {
                 resultSet.getString("last_name"),
                 resultSet.getString("password"),
                 role,
-                resultSet.getDate("birthday"));
+                resultSet.getDate("birthday").toLocalDate());
     }
 
     public Viewer checkUserAuthorization(String name, String password) {
@@ -44,13 +62,22 @@ public class ViewerDaoImpl extends AbstractDao<Viewer> {
     }
 
     @Override
-    public boolean update(long id, Viewer item) {
-        return false;
-    }
-
-    @Override
-    public boolean delete(long id) {
-        return false;
+    public boolean update(long id, Viewer viewer) {
+        try (PreparedStatement statement = connection
+                .prepareStatement("UPDATE viewers SET first_name = ?, last_name = ?, password = ?, " +
+                        "birthday = ?, role_id = ? WHERE id = ?")) {
+            statement.setString(1, viewer.getName().trim());
+            statement.setString(2, viewer.getLastName().trim());
+            statement.setString(3, viewer.getPassword().trim());
+            statement.setDate(4, Date.valueOf(viewer.getBirthday()));
+            statement.setLong(5, viewer.getRole().getId());
+            statement.setLong(6, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(ERROR_MESSAGE + e);
+            throw new ConnectionException(e);
+        }
+        return true;
     }
 
     public List<Viewer> searchViewerMovieCountByGenre(long genreId) {
@@ -148,6 +175,6 @@ public class ViewerDaoImpl extends AbstractDao<Viewer> {
                 resultSet.getLong("id"),
                 resultSet.getString("first_name"),
                 resultSet.getString("last_name"),
-                resultSet.getDate("birthday"));
+                resultSet.getDate("birthday").toLocalDate());
     }
 }

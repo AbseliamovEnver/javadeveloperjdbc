@@ -26,6 +26,7 @@ public class MenuContent {
 
         authorizationMenu.add("AUTHORIZATION MENU");
         authorizationMenu.add("Log in");
+        authorizationMenu.add("Registration");
         authorizationMenu.add("Exit");
 
         viewerMenu.add("VIEWER MENU");

@@ -5,6 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 public class IOUtil {
@@ -57,6 +63,26 @@ public class IOUtil {
             }
         } while (number < 0);
         return number;
+    }
+
+    public static LocalDate readDate(String message) {
+        System.out.println(message);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String dateStr;
+        LocalDate date;
+        while (true) {
+            try {
+                dateStr = getReader().readLine();
+                if (!dateStr.equals("0")) {
+                    date = LocalDate.parse(dateStr, formatter);
+                    return date;
+                } else {
+                    return null;
+                }
+            } catch (IOException e) {
+                System.out.println("Error read from console " + e);
+            }
+        }
     }
 
     private static BufferedReader getReader() {

@@ -5,6 +5,8 @@ import com.abseliamov.cinemaservice.model.Role;
 import com.abseliamov.cinemaservice.utils.CurrentViewer;
 import com.abseliamov.cinemaservice.utils.IOUtil;
 
+import java.time.LocalDate;
+
 public class AuthorizationMenu {
     private AdminMenu adminMenu;
     private ViewerMenu viewerMenu;
@@ -40,6 +42,9 @@ public class AuthorizationMenu {
                         }
                     }
                     break;
+                case 2:
+                    registration();
+                    break;
                 default:
                     if (authorizationMenuItem >= MenuContent.getAuthorizationMenu().size() - 1) {
                         System.out.println("Enter correct menu item.");
@@ -59,6 +64,18 @@ public class AuthorizationMenu {
                 }
             } else {
                 return false;
+            }
+        }
+    }
+
+    private boolean registration() {
+        while (true) {
+            String firstName = IOUtil.readString("Enter first name: ");
+            String lastName = IOUtil.readString("Enter last name: ");
+            String password = IOUtil.readString("Enter password: ");
+            LocalDate birthday = IOUtil.readDate("Enter your birthday in format dd-mm-yyyy or enter \'0\' to return: ");
+            if (birthday != null) {
+                return viewerController.createViewer(firstName, lastName, password, Role.USER, birthday);
             }
         }
     }

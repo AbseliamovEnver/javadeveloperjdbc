@@ -1,23 +1,23 @@
 package com.abseliamov.cinemaservice.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Viewer extends GenericModel {
     private String lastName;
     private String password;
     private Role role;
-    private Date birthday;
+    private LocalDate birthday;
 
     public Viewer() {
     }
 
-    public Viewer(long id, String name, String lastName, Date birthday) {
+    public Viewer(long id, String name, String lastName, LocalDate birthday) {
         super(id, name);
         this.lastName = lastName;
         this.birthday = birthday;
     }
 
-    public Viewer(long id, String name, String lastName, String password, Role role, Date birthday) {
+    public Viewer(long id, String name, String lastName, String password, Role role, LocalDate birthday) {
         super(id, name);
         this.lastName = lastName;
         this.password = password;
@@ -49,11 +49,11 @@ public class Viewer extends GenericModel {
         this.role = role;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 

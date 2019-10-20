@@ -42,6 +42,10 @@ public class Injector {
     private static SeatService seatService = new SeatService(seatDao);
     private static SeatController seatController = new SeatController(seatService);
 
+    private static RoleDao roleDao = new RoleDao(connection, ROLES_TABLE);
+    private static RoleService roleService = new RoleService(roleDao);
+    private static RoleController roleController = new RoleController(roleService);
+
     private static TicketDaoImpl ticketDao = new TicketDaoImpl(
             connection, currentViewer, movieDao, seatDao, TICKETS_TABLE);
     private static TicketService ticketService = new TicketService(ticketDao, viewerDao, currentViewer);
@@ -51,7 +55,7 @@ public class Injector {
             genreController, seatController, seatTypesController, movieController);
 
     private static AdminMenu adminMenu = new AdminMenu(genreController, movieController, seatController,
-            viewerController, ticketController, seatTypesController, viewerMenu);
+            viewerController, ticketController, seatTypesController, roleController, viewerMenu);
 
     private static AuthorizationMenu authorizationMenu = new AuthorizationMenu(adminMenu, viewerMenu,
             viewerController, currentViewer);

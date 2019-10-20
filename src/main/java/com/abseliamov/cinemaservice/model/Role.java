@@ -2,7 +2,8 @@ package com.abseliamov.cinemaservice.model;
 
 public enum Role {
     ADMIN(1),
-    USER(2);
+    USER(2),
+    GUEST(3);
 
     private long id;
 
@@ -12,5 +13,12 @@ public enum Role {
 
     public long getId() {
         return id;
+    }
+
+
+
+    @Override
+    public String toString() {
+        return String.format("%-2s%-8s%-1s\n%-1s", " ", getId(), name(), "|-------|------------|");
     }
 }
