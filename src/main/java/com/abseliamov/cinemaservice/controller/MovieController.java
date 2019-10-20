@@ -1,5 +1,6 @@
 package com.abseliamov.cinemaservice.controller;
 
+import com.abseliamov.cinemaservice.model.Genre;
 import com.abseliamov.cinemaservice.model.Movie;
 import com.abseliamov.cinemaservice.service.MovieService;
 
@@ -11,6 +12,22 @@ public class MovieController {
 
     public MovieController(MovieService movieService) {
         this.movieService = movieService;
+    }
+
+    public void createMovie(String movieTitle, Genre genre) {
+        movieService.createMovie(movieTitle, genre);
+    }
+
+    public Movie getById(long movieId) {
+        return movieService.getById(movieId);
+    }
+
+    public List<Movie> getAll() {
+        return movieService.getAll();
+    }
+
+    public void updateMovie(long movieId, String movieTitle, Genre genre, BigDecimal cost) {
+        movieService.update(movieId, movieTitle, genre, cost);
     }
 
     public boolean increaseCostMovie(BigDecimal ticketCost, Movie movie) {
@@ -27,9 +44,5 @@ public class MovieController {
 
     public void searchLeastProfitableMovie() {
         movieService.searchLeastProfitableMovie();
-    }
-
-    public List<Movie> getAll() {
-        return movieService.getAll();
     }
 }

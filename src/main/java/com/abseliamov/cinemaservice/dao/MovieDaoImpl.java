@@ -3,6 +3,7 @@ package com.abseliamov.cinemaservice.dao;
 import com.abseliamov.cinemaservice.model.Movie;
 import com.abseliamov.cinemaservice.utils.ConnectionUtil;
 
+import java.math.RoundingMode;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +24,32 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
                 resultSet.getLong("id"),
                 resultSet.getString("title"),
                 genreDao.getById(resultSet.getLong("genre_id")),
-                resultSet.getBigDecimal("cost"));
+                resultSet.getBigDecimal("cost").setScale(2, RoundingMode.DOWN));
+    }
+
+    @Override
+    public void add(Movie movie) {
+        try (PreparedStatement statement = connection
+                .prepareStatement("INSERT INTO movies VALUES(?,?,?,?)")) {
+            statement.setLong(1, movie.getId());
+            statement.setString(2, movie.getName());
+            statement.setLong(3, movie.getGenre().getId());
+            statement.setBigDecimal(4, movie.getCost().setScale(2, RoundingMode.DOWN));
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
     }
 
     @Override
     public boolean update(long id, Movie movie) {
         boolean updateExist = false;
         try (PreparedStatement statement = connection
-                .prepareStatement("UPDATE movies SET cost = ? WHERE id = ?")) {
-            statement.setBigDecimal(1, movie.getCost());
-            statement.setLong(2, id);
+                .prepareStatement("UPDATE movies SET title = ?, genre_id = ?, cost = ? WHERE id = ?")) {
+            statement.setString(1, movie.getName());
+            statement.setLong(2, movie.getGenre().getId());
+            statement.setBigDecimal(3, movie.getCost().setScale(2, RoundingMode.DOWN));
+            statement.setLong(4, id);
             statement.executeUpdate();
             updateExist = true;
         } catch (SQLException e) {
@@ -92,6 +109,6 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
         return new Movie(
                 resultSet.getLong("id"),
                 resultSet.getString("title"),
-                resultSet.getBigDecimal("total_price"));
+                resultSet.getBigDecimal("total_price").setScale(2, RoundingMode.DOWN));
     }
 }
