@@ -5,12 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 public class IOUtil {
@@ -65,6 +62,25 @@ public class IOUtil {
         return number;
     }
 
+    public static double readPrice(String message) {
+        System.out.println(message);
+        double price = -1.0;
+        do {
+            try {
+                price = Double.valueOf(getReader().readLine());
+                if (price < 0) {
+                    System.out.println("Enter a price greater than \'0\' or \'0\' to return: ");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Incorrect price. " + e);
+                System.out.println("Enter correct price or \'0\' for return: ");
+            } catch (IOException e) {
+                System.out.println("Error read from console " + e);
+            }
+        } while (price < 0);
+        return price;
+    }
+
     public static LocalDate readDate(String message) {
         System.out.println(message);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -76,6 +92,26 @@ public class IOUtil {
                 if (!dateStr.equals("0")) {
                     date = LocalDate.parse(dateStr, formatter);
                     return date;
+                } else {
+                    return null;
+                }
+            } catch (IOException e) {
+                System.out.println("Error read from console " + e);
+            }
+        }
+    }
+
+    public static LocalDateTime readDateTime(String message) {
+        String dateTimeStr;
+        LocalDateTime dateTime;
+        System.out.println(message);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH-mm");
+        while (true) {
+            try {
+                dateTimeStr = getReader().readLine();
+                if (!dateTimeStr.equals("0")) {
+                    dateTime = LocalDateTime.parse(dateTimeStr, formatter);
+                    return dateTime;
                 } else {
                     return null;
                 }

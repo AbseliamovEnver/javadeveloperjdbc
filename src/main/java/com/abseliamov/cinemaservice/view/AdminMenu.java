@@ -6,6 +6,7 @@ import com.abseliamov.cinemaservice.utils.IOUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class AdminMenu extends ViewerMenu {
     private GenreController genreController;
@@ -176,6 +177,10 @@ public class AdminMenu extends ViewerMenu {
                     updateViewer();
                     updateMenuItem = -1;
                     break;
+                case 5:
+                    updateTicket();
+                    updateMenuItem = -1;
+                    break;
                 default:
                     if (updateMenuItem >= MenuContent.getAdminMenuUpdate().size() - 1) {
                         updateMenuItem = -1;
@@ -212,6 +217,10 @@ public class AdminMenu extends ViewerMenu {
                     deleteViewer();
                     deleteMenuItem = -1;
                     break;
+                case 5:
+                    deleteTicket();
+                    deleteMenuItem = -1;
+                    break;
                 default:
                     if (deleteMenuItem >= MenuContent.getAdminMenuDelete().size() - 1) {
                         deleteMenuItem = -1;
@@ -244,7 +253,7 @@ public class AdminMenu extends ViewerMenu {
         SeatTypes seatType = null;
         long seatNumber = IOUtil.readNumber("Enter seat number or enter \'0\' to return: ");
         if (seatNumber != 0 && seatTypesController.getAllSeatType() != null) {
-            long seatTypeId = IOUtil.readNumber("Select seat type id or enter \'0\' to return: ");
+            long seatTypeId = IOUtil.readNumber("Select seat type ID or enter \'0\' to return: ");
             if (seatTypeId != 0) {
                 for (SeatTypes seatTypesItem : SeatTypes.values()) {
                     if (seatTypesItem.getId() == seatTypeId) {
@@ -265,7 +274,7 @@ public class AdminMenu extends ViewerMenu {
         LocalDate birthday = IOUtil.readDate("Enter your birthday in format dd-mm-yyyy or enter \'0\' to return: ");
         if (birthday != null && roleController.getAll() != null) {
             roleController.printAllRoles();
-            roleId = IOUtil.readNumber("Select role id: ");
+            roleId = IOUtil.readNumber("Select role ID: ");
             if (roleId != 0 && (role = roleController.getById(roleId)) != null) {
                 viewerController.createViewer(firstName, lastName, password, role, birthday);
             }
@@ -273,13 +282,33 @@ public class AdminMenu extends ViewerMenu {
     }
 
     private void createTicket() {
-
+        boolean status = false;
+        long movieId, seatId;
+        LocalDateTime dateTime;
+        Movie movie = null;
+        Seat seat = null;
+        double price;
+        if (movieController.getAll() != null) {
+            movieId = IOUtil.readNumber("Select movie ID or enter \'0\' to return: ");
+            if (movieId != 0 && (movie = movieController.getById(movieId)) != null) {
+                status = true;
+            }
+            if (status && seatController.getAll() != null) {
+                seatId = IOUtil.readNumber("Select seat ID or enter \'0\' to return: ");
+                status = seatId != 0 && (seat = seatController.getById(seatId)) != null;
+            }
+            if (status) {
+                price = IOUtil.readPrice("Enter price ticket: ");
+                dateTime = IOUtil.readDateTime("Enter date and time in format dd-MM-yyyy HH-mm");
+                ticketController.createTicket(movie, seat, price, dateTime);
+            }
+        }
     }
 
     private void updateGenre() {
         String updateGenreName;
         if (genreController.getAll() != null) {
-            long genreId = IOUtil.readNumber("Select genre id to update or enter \'0\' to return: ");
+            long genreId = IOUtil.readNumber("Select genre ID to update or enter \'0\' to return: ");
             if (genreId != 0 && genreController.getById(genreId) != null) {
                 updateGenreName = IOUtil.readString("Enter a new name for the genre to update: ");
                 genreController.updateGenre(genreId, updateGenreName);
@@ -293,13 +322,13 @@ public class AdminMenu extends ViewerMenu {
         BigDecimal cost = null;
         String movieTitle = null;
         if (movieController.getAll() != null) {
-            long movieId = IOUtil.readNumber("Select movie id to update or enter \'0\' to return: ");
+            long movieId = IOUtil.readNumber("Select movie ID to update or enter \'0\' to return: ");
             if (movieId != 0 && (movie = movieController.getById(movieId)) != null) {
                 movieTitle = IOUtil.readString("Enter a new title for the movie to update " +
                         "or press \'ENTER\' key to continue: ");
                 movieTitle = movieTitle.equals("") ? movie.getName() : movieTitle;
                 genreController.getAll();
-                String genreStr = IOUtil.readString("Select genre id to update or press \'ENTER\' key to continue: ");
+                String genreStr = IOUtil.readString("Select genre ID to update or press \'ENTER\' key to continue: ");
                 if (genreStr.equals("")) {
                     genre = movie.getGenre();
                 } else {
@@ -322,7 +351,7 @@ public class AdminMenu extends ViewerMenu {
         SeatTypes seatType;
         long seatTypeId;
         if (seatController.getAll() != null) {
-            long seatId = IOUtil.readNumber("Select seat id to update or enter \'0\' to return: ");
+            long seatId = IOUtil.readNumber("Select seat ID to update or enter \'0\' to return: ");
             if (seatId != 0 && (seat = seatController.getById(seatId)) != null) {
                 seatTypesController.getAllSeatType();
                 String seatTypeStr = IOUtil.readString("Enter a new seat type to update " +
@@ -341,7 +370,7 @@ public class AdminMenu extends ViewerMenu {
         Viewer viewer;
         Role role;
         if (viewerController.getAll() != null) {
-            long viewerId = IOUtil.readNumber("Select viewer id to update or enter \'0\' to return: ");
+            long viewerId = IOUtil.readNumber("Select viewer ID to update or enter \'0\' to return: ");
             if (viewerId != 0 && (viewer = viewerController.getById(viewerId)) != null) {
                 String firstName = IOUtil.readString("Enter a new first name to update " +
                         "or press \'ENTER\' key to continue: ");
@@ -352,7 +381,7 @@ public class AdminMenu extends ViewerMenu {
                 LocalDate birthday = IOUtil.readDate("Enter a new birthday in format dd-mm-yyyy " +
                         "or enter \'0\' to continue: ");
                 roleController.printAllRoles();
-                long roleId = IOUtil.readNumber("Select a new role id to update " +
+                long roleId = IOUtil.readNumber("Select a new role ID to update " +
                         "or enter \'0\' to continue: ");
                 firstName = firstName.equals("") ? viewer.getName() : firstName;
                 lastName = lastName.equals("") ? viewer.getLastName() : lastName;
@@ -367,9 +396,37 @@ public class AdminMenu extends ViewerMenu {
         }
     }
 
+    private void updateTicket() {
+        long ticketId, movieId, seatId, buyStatus;
+        double price;
+        LocalDateTime dateTime;
+        Ticket ticket;
+        Movie movie;
+        Seat seat;
+        if (ticketController.getAllTicketWithStatus() != null) {
+            ticketId = IOUtil.readNumber("Select ticket ID to update or enter \'0\' to return: ");
+            if (ticketId != 0 && (ticket = ticketController.getById(ticketId)) != null
+                    && movieController.getAll() != null) {
+                movieId = IOUtil.readNumber("Select new movie ID or enter \'0\' to continue: ");
+                seatController.getAll();
+                seatId = IOUtil.readNumber("Select new seat ID or enter \'0\' to continue: ");
+                buyStatus = IOUtil.readNumber("Enter new buy status: ");
+                price = IOUtil.readPrice("Enter new price ticket: ");
+                dateTime = IOUtil.readDateTime("Enter new date and time in format dd-MM-yyyy HH-mm " +
+                        "or enter \'0\' to continue: ");
+
+                if ((movie = movieController.getById(movieId)) != null &&
+                        (seat = seatController.getById(seatId)) != null) {
+                    dateTime = dateTime == null ? ticket.getDateTime() : dateTime;
+                    ticketController.updateTicket(ticketId, movie, seat, buyStatus, price, dateTime);
+                }
+            }
+        }
+    }
+
     private void deleteGenre() {
         if (genreController.getAll() != null) {
-            long genreId = IOUtil.readNumber("Select genre id to delete or enter \'0\' to return: ");
+            long genreId = IOUtil.readNumber("Select genre ID to delete or enter \'0\' to return: ");
             if (genreId != 0 && genreController.getById(genreId) != null) {
                 genreController.deleteGenre(genreId);
             }
@@ -378,7 +435,7 @@ public class AdminMenu extends ViewerMenu {
 
     private void deleteMovie() {
         if (movieController.getAll() != null) {
-            long movieId = IOUtil.readNumber("Select movie id to delete or enter \'0\' to return: ");
+            long movieId = IOUtil.readNumber("Select movie ID to delete or enter \'0\' to return: ");
             if (movieId != 0 && movieController.getById(movieId) != null) {
                 movieController.deleteMovie(movieId);
             }
@@ -387,7 +444,7 @@ public class AdminMenu extends ViewerMenu {
 
     private void deleteSeat() {
         if (seatController.getAll() != null) {
-            long seatId = IOUtil.readNumber("Select seat id to delete or enter \'0\' to return: ");
+            long seatId = IOUtil.readNumber("Select seat ID to delete or enter \'0\' to return: ");
             if (seatId != 0 && seatController.getById(seatId) != null) {
                 seatController.deleteSeat(seatId);
             }
@@ -396,9 +453,18 @@ public class AdminMenu extends ViewerMenu {
 
     private void deleteViewer() {
         if (viewerController.getAll() != null) {
-            long viewerId = IOUtil.readNumber("Select viewer id to delete or enter \'0\' to return: ");
+            long viewerId = IOUtil.readNumber("Select viewer ID to delete or enter \'0\' to return: ");
             if (viewerId != 0 && viewerController.getById(viewerId) != null) {
                 viewerController.deleteSeat(viewerId);
+            }
+        }
+    }
+
+    private void deleteTicket() {
+        if (ticketController.getAllTicket() != null) {
+            long ticketId = IOUtil.readNumber("Select ticket ID to delete or enter \'0\' to return: ");
+            if (ticketId != 0 && ticketController.getByIdAdmin(ticketId) != null) {
+                ticketController.deleteTicket(ticketId);
             }
         }
     }

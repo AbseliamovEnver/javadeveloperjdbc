@@ -2,11 +2,14 @@ package com.abseliamov.cinemaservice.service;
 
 import com.abseliamov.cinemaservice.dao.TicketDaoImpl;
 import com.abseliamov.cinemaservice.dao.ViewerDaoImpl;
+import com.abseliamov.cinemaservice.model.Movie;
+import com.abseliamov.cinemaservice.model.Seat;
 import com.abseliamov.cinemaservice.model.Ticket;
 import com.abseliamov.cinemaservice.model.Viewer;
 import com.abseliamov.cinemaservice.utils.CurrentViewer;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,11 +18,33 @@ public class TicketService {
     private TicketDaoImpl ticketDao;
     private ViewerDaoImpl viewerDao;
     private CurrentViewer currentViewer;
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private DateTimeFormatter weekdayFormatter = DateTimeFormatter.ofPattern("EEEE").withLocale(Locale.ENGLISH);
 
     public TicketService(TicketDaoImpl ticketDao, ViewerDaoImpl viewerDao, CurrentViewer currentViewer) {
         this.ticketDao = ticketDao;
         this.viewerDao = viewerDao;
         this.currentViewer = currentViewer;
+    }
+
+    public boolean createTicket(Movie movie, Seat seat, double price, LocalDateTime dateTime) {
+        Ticket newTicket = new Ticket(0, dateTime, movie, seat, price, 0);
+        List<Ticket> tickets = ticketDao.getAll();
+        Ticket ticket = tickets.stream()
+                .filter(ticketItem -> ticketItem.getDateTime().equals(dateTime) &&
+                        ticketItem.getMovie().equals(movie) &&
+                        ticketItem.getSeat().equals(seat))
+                .findFirst()
+                .orElse(null);
+        if (ticket == null) {
+            ticketDao.add(newTicket);
+            System.out.println("Ticket successfully added.");
+            return true;
+        } else {
+            System.out.println("Such ticket already exists.");
+        }
+        return false;
     }
 
     public List<Ticket> getTicketByMovieTitle(String movieTitle) {
@@ -47,6 +72,10 @@ public class TicketService {
             printTicket(list);
         } else ticket = null;
         return ticket;
+    }
+
+    public Ticket getByIdAdmin(long ticketId) {
+        return ticketDao.getById(ticketId);
     }
 
     public boolean buyTicket(long ticketId) {
@@ -126,9 +155,33 @@ public class TicketService {
         return tickets;
     }
 
+    public List<Ticket> getAllTicketWithStatus() {
+        List<Ticket> tickets = ticketDao.getAll();
+        printTicketWithStatus(tickets);
+        return tickets;
+    }
+
+    public void update(long ticketId, Movie movie, Seat seat, long buyStatus, double price, LocalDateTime dateTime) {
+        List<Ticket> tickets = ticketDao.getAll();
+        Ticket updateTicket = new Ticket(ticketId, dateTime, movie, seat, price, buyStatus);
+        Ticket ticket = tickets.stream()
+                .filter(ticketItem -> ticketItem.getDateTime().equals(dateTime) &&
+                        ticketItem.getMovie().equals(movie) &&
+                        ticketItem.getSeat().equals(seat))
+                .findFirst()
+                .orElse(null);
+        if (ticket == null && ticketDao.update(ticketId, updateTicket)) {
+            System.out.println("Ticket with id \'" + ticketId + "\' updated successfully.");
+        }
+    }
+
+    public void delete(long ticketId) {
+        if (ticketDao.delete(ticketId)) {
+            System.out.println("Ticket with id \'" + ticketId + "\' deleted.");
+        }
+    }
+
     private void printAllDate(Map<LocalDate, Long> dateList) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        DateTimeFormatter weekdayFormatter = DateTimeFormatter.ofPattern("EEEE").withLocale(Locale.ENGLISH);
         System.out.println("\n|------------------------------------|");
         System.out.printf("%-13s%-1s\n", " ", "LIST OF DATE");
         System.out.println("|------------------------------------|");
@@ -168,6 +221,33 @@ public class TicketService {
                     .forEach(System.out::println);
         } else {
             System.out.println("At your request tickets available is not found");
+        }
+    }
+
+    private void printTicketWithStatus(List<Ticket> tickets) {
+        if (!tickets.isEmpty()) {
+            System.out.println("\n|--------------------------------------------------------------------" +
+                    "-----------------------------------------------------------|");
+            System.out.printf("%-55s%-1s\n", " ", "LIST OF TICKETS");
+            System.out.println("|----------------------------------------------------------------------" +
+                    "---------------------------------------------------------|");
+            System.out.printf("%-3s%-15s%-29s%-17s%-12s%-9s%-12s%-15s%-9s%-1s\n",
+                    " ", "ID", "MOVIE TITLE", "GENRE", "DATE", "TIME", "SEAT TYPE", "SEAT NUMBER", "PRICE", "STATUS");
+            System.out.println("|-------|------------------------------|-------------------|------------|----------" +
+                    "|-----------|-------------|---------|--------|");
+            tickets.stream()
+                    .sorted(Comparator.comparing(Ticket::getId))
+                    .collect(Collectors.toList())
+                    .forEach(ticket -> System.out.printf("%-2s%-8s%-31s%-20s%-13s%-11s%-16s%-11s%-11s%-1s\n%1s\n",
+                            " ", ticket.getId(), ticket.getMovie().getName(), ticket.getMovie().getGenre().getName(),
+                            ticket.getDateTime().toLocalDate().format(dateFormatter),
+                            ticket.getDateTime().toLocalTime().format(timeFormatter),
+                            ticket.getSeat().getSeatTypes(), ticket.getSeat().getNumber(),
+                            ticket.getPrice(), ticket.getStatus(),
+                            "|-------|------------------------------|-------------------|------------|----------" +
+                                    "|-----------|-------------|---------|--------|"));
+        } else {
+            System.out.println("List tickets is empty.");
         }
     }
 }

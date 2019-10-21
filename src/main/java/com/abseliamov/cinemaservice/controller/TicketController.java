@@ -1,9 +1,12 @@
 package com.abseliamov.cinemaservice.controller;
 
+import com.abseliamov.cinemaservice.model.Movie;
+import com.abseliamov.cinemaservice.model.Seat;
 import com.abseliamov.cinemaservice.model.Ticket;
 import com.abseliamov.cinemaservice.service.TicketService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +29,7 @@ public class TicketController {
         return ticketService.getTicketBySeatType(seatTypeId);
     }
 
-    public Ticket getById(long ticketId){
+    public Ticket getById(long ticketId) {
         return ticketService.getById(ticketId);
     }
 
@@ -62,11 +65,32 @@ public class TicketController {
         return ticketService.checkTicketAvailable(ticketId);
     }
 
+    public Ticket getByIdAdmin(long ticketId) {
+        return ticketService.getByIdAdmin(ticketId);
+    }
+
+    public boolean createTicket(Movie movie, Seat seat, double price, LocalDateTime dateTime) {
+        return ticketService.createTicket(movie, seat, price, dateTime);
+    }
+
     public List<Ticket> getAll() {
         return ticketService.getAll();
     }
 
     public List<Ticket> getAllTicket() {
         return ticketService.getAllTicket();
+    }
+
+    public List<Ticket> getAllTicketWithStatus() {
+        return ticketService.getAllTicketWithStatus();
+    }
+
+    public void updateTicket(long ticketId, Movie movie, Seat seat, long buyStatus, double price,
+                             LocalDateTime dateTime) {
+        ticketService.update(ticketId, movie, seat, buyStatus, price, dateTime);
+    }
+
+    public void deleteTicket(long ticketId) {
+        ticketService.delete(ticketId);
     }
 }
