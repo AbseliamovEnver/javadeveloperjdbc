@@ -35,7 +35,7 @@ public abstract class AbstractDao<T extends GenericModel> implements GenericDao<
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                result = createEntity(resultSet);
+                result = convertToEntity(resultSet);
             }
         } catch (SQLException e) {
             System.out.println(ERROR_MESSAGE + tableName + ". " + e);
@@ -49,7 +49,7 @@ public abstract class AbstractDao<T extends GenericModel> implements GenericDao<
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName)) {
             while (resultSet.next()) {
-                T entity = createEntity(resultSet);
+                T entity = convertToEntity(resultSet);
                 result.add(entity);
             }
         } catch (SQLException e) {
@@ -71,5 +71,5 @@ public abstract class AbstractDao<T extends GenericModel> implements GenericDao<
         return true;
     }
 
-    public abstract T createEntity(ResultSet resultSet) throws SQLException;
+    public abstract T convertToEntity(ResultSet resultSet) throws SQLException;
 }

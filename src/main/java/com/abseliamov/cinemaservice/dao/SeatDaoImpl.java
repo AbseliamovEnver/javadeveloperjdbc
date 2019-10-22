@@ -20,7 +20,7 @@ public class SeatDaoImpl extends AbstractDao<Seat> {
     }
 
     @Override
-    public Seat createEntity(ResultSet resultSet) throws SQLException {
+    public Seat convertToEntity(ResultSet resultSet) throws SQLException {
         return new Seat(
                 resultSet.getLong("id"),
                 seatTypesDao.getById(resultSet.getLong("seat_type_id")),

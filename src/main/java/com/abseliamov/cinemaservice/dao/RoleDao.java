@@ -25,7 +25,7 @@ public class RoleDao {
         try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + tableName + ";")) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                roles.add(createEntity(resultSet));
+                roles.add(convertToRole(resultSet));
             }
         } catch (SQLException e) {
             System.out.println(ERROR_MESSAGE + e);
@@ -34,7 +34,7 @@ public class RoleDao {
         return roles;
     }
 
-    private Role createEntity(ResultSet resultSet) throws SQLException {
+    private Role convertToRole(ResultSet resultSet) throws SQLException {
         Role role = null;
         for (Role roleItem : Role.values()) {
             if (roleItem.getId() == resultSet.getLong("id")) {
@@ -51,7 +51,7 @@ public class RoleDao {
             statement.setLong(1, roleId);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                role = createEntity(resultSet);
+                role = convertToRole(resultSet);
             }
         } catch (SQLException e) {
             System.out.println(ERROR_MESSAGE + e);

@@ -17,7 +17,7 @@ public class GenreDaoImpl extends AbstractDao<Genre> {
     }
 
     @Override
-    public Genre createEntity(ResultSet resultSet) throws SQLException {
+    public Genre convertToEntity(ResultSet resultSet) throws SQLException {
         return new Genre(resultSet.getLong("id"), resultSet.getString("name"));
     }
 

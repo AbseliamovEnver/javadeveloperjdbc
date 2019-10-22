@@ -19,7 +19,7 @@ public class MovieDaoImpl extends AbstractDao<Movie> {
     }
 
     @Override
-    public Movie createEntity(ResultSet resultSet) throws SQLException {
+    public Movie convertToEntity(ResultSet resultSet) throws SQLException {
         return new Movie(
                 resultSet.getLong("id"),
                 resultSet.getString("title"),

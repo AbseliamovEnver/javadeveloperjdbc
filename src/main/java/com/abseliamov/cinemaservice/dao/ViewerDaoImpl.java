@@ -38,7 +38,7 @@ public class ViewerDaoImpl extends AbstractDao<Viewer> {
     }
 
     @Override
-    public Viewer createEntity(ResultSet resultSet) throws SQLException {
+    public Viewer convertToEntity(ResultSet resultSet) throws SQLException {
         Role role = null;
         for (Role roleItem : Role.values()) {
             if (roleItem.getId() == resultSet.getLong("role_id")) {

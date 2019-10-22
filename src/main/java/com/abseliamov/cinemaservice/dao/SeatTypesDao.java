@@ -22,7 +22,7 @@ public class SeatTypesDao {
         this.tableName = tableName;
     }
 
-    public SeatTypes createEntity(ResultSet resultSet) throws SQLException {
+    public SeatTypes convertToSeatType(ResultSet resultSet) throws SQLException {
         SeatTypes seatTypes = null;
         for (SeatTypes type : SeatTypes.values()) {
             if (type.getId() == resultSet.getLong("id")) {
@@ -39,7 +39,7 @@ public class SeatTypesDao {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                result = createEntity(resultSet);
+                result = convertToSeatType(resultSet);
             }
         } catch (SQLException e) {
             System.out.println(ERROR_MESSAGE + e);
@@ -53,7 +53,7 @@ public class SeatTypesDao {
         try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM " + tableName + ";")) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                seatTypes.add(createEntity(resultSet));
+                seatTypes.add(convertToSeatType(resultSet));
             }
         } catch (SQLException e) {
             System.out.println(ERROR_MESSAGE + e);
