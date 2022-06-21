@@ -11,7 +11,7 @@
     <properties>
         <apache-commons.version>3.5</apache-commons.version>
         <liquibase-core.version>3.8.0</liquibase-core.version>
-        <mysql-connector-java.version>8.0.18</mysql-connector-java.version>
+        <mysql-connector-java.version>8.0.28</mysql-connector-java.version>
         <guava.version>18.0</guava.version>
 
         <liquibase-maven-plugin.version>3.8.0</liquibase-maven-plugin.version>
